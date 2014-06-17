@@ -1,14 +1,19 @@
+/*
+	cfgp - go configuration file parser package
+	Copyright (c) 2014 Andrea Masi
+*/
 package cfgp
 
 import (
 	"regexp"
 )
+
 type iniDataType map[string][]map[string]string
 
 type Conf struct {
 	IniData iniDataType
 	//Store the configuration file format (INI, YAML etc)
-	//Actually only INI supported 
+	//Actually only INI supported
 	ConfType string
 }
 

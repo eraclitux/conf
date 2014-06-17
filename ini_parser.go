@@ -2,16 +2,16 @@
 package cfgp
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
 	"regexp"
 	"strings"
 )
 
 var DEBUG bool
 
-//Given one line encoded like "key = value" 
+//Given one line encoded like "key = value"
 //returns corresponding map
 func parseKeyValue(line string) map[string]string {
 	kvm := make(map[string]string)
@@ -50,7 +50,7 @@ func (c *Conf) ParseINI(path string) error {
 			continue
 		}
 		kv := parseKeyValue(line)
-		//This even prevents empry line to be added
+		//This even prevents empty line to be added
 		if len(kv) > 0 {
 			c.IniData[section] = append(c.IniData[section], kv)
 		}
@@ -66,23 +66,43 @@ func (c *Conf) ParseINI(path string) error {
 
 //Return true if file has a specific section
 func (c *Conf) HasSection(section string) bool {
+	if c.ConfType != "INI" {
+		return false
+	}
+	_, ok := c.IniData[section]
+	return ok
+}
+
+func (c *Conf) HasKey(section, key string) bool {
+	if c.ConfType != "INI" {
+		return false
+	}
 	return false
 }
 
-func (c *Conf) HasKey(key, section string) bool {
-	return false
+func (c *Conf) GetKey(section, key string) string {
+	if c.ConfType != "INI" {
+		return ""
+	}
+	return ""
 }
 
 //Return all key/vaule for specific section
-func (c *Conf) GetSection(section string) map[string]string {
+func (c *Conf) GetSection(section string) []map[string]string {
+	if c.ConfType != "INI" {
+		return nil
+	}
 	return nil
 }
 
 //Return all sections found in file
 func (c *Conf) GetSections(section string) []string {
+	if c.ConfType != "INI" {
+		return nil
+	}
 	return nil
 }
 
 func init() {
-	DEBUG = true
+	DEBUG = false
 }
