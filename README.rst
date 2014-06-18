@@ -3,16 +3,18 @@
 
 Intro
 =====
-A go package for simple configuration file parser. 
+A go package for configuration files parsing.
 
 Aims to be multiformat, only INI files supported for now.
 
-Example of usage
-================
+Usage and examples
+==================
+See `godocs <http://godoc.org/github.com/eraclitux/cfgp>`_ for in depth documentation.
 
-INI
----
+ini files
+---------
 Given the example ini file (es my-conf.ini)::
+
         [main]
         max-hype = 10
 

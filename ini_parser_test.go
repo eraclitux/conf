@@ -2,8 +2,8 @@ package cfgp
 
 import (
 	"fmt"
-	"testing"
 	"reflect"
+	"testing"
 )
 
 type iniParseCaseResponse struct {
@@ -15,7 +15,7 @@ var iniParseTestCases []iniParseCaseResponse
 
 type hasSectionCase struct {
 	Path           string
-	TestSection string
+	TestSection    string
 	ExpectedResult bool
 }
 
@@ -48,15 +48,18 @@ func TestHasSection(t *testing.T) {
 }
 
 func init() {
-	//TestParseINI
+	// Enable verbose output
+	debug = true
+
+	// TestParseINI
 	expectedMap := iniDataType{"main": []map[string]string{
 		{"one": "42"},
 		{"three": "Zaphod"},
 	},
-	"questions": []map[string]string{
-		{"answer":"42"},
-		{"wrong-answer":"43"},
-	},
+		"questions": []map[string]string{
+			{"answer": "42"},
+			{"wrong-answer": "43"},
+		},
 	}
 	iniTestCase := iniParseCaseResponse{
 		"test_data/one.ini",
@@ -64,7 +67,7 @@ func init() {
 	}
 	iniParseTestCases = append(iniParseTestCases, iniTestCase)
 
-	//TestHasSection
+	// TestHasSection
 	hasSectionTestCase := hasSectionCase{
 		"test_data/one.ini",
 		"questions",
