@@ -2,8 +2,14 @@
 // Copyright (c) 2014 Andrea Masi
 
 // Configuration files parser package fo Go.
-// Try to be modular and extendible to support different formats.
-// Only INI format supported for now, YAML on the roadmap.
+//
+// Tries to be modular and extendible to support different formats.
+//
+// Only INI format supported for now. Files must follows INI informal standard:
+//
+//	https://en.wikipedia.org/wiki/INI_file
+//
+// YAML support is on the roadmap.
 package cfgp
 
 import (
@@ -22,14 +28,15 @@ type Conf struct {
 
 var debug bool = false
 
-// Parse guesses configuration type by file extention and call specific parser.
+// Parse guesses configuration type by file extention and call specific parser to pupulate Conf.
+//
 // .ini|.txt|.cfg are evaluated as INI files.
 func Parse(path string) *Conf {
 	conf := Conf{}
 	if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {
 		conf.IniData = make(iniDataType)
 		conf.ConfType = "INI"
-		conf.ParseINI(path)
+		conf.parseINI(path)
 		return &conf
 	} else if match, _ := regexp.MatchString(`\.(yaml)$`, path); match {
 		// TODO FIXME

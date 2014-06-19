@@ -22,13 +22,13 @@ func parseKeyValue(line string) map[string]string {
 	return kvm
 }
 
-// ParseINI opens configuration file specified by path and populate Conf.IniData.
+// parseINI opens configuration file specified by path and populate Conf.IniData.
 // All values as returned as strings, the caller has to make required casting.
 // Files must follows INI informal standard:
 //
 //	https://en.wikipedia.org/wiki/INI_file
 //
-func (c *Conf) ParseINI(path string) error {
+func (c *Conf) parseINI(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return err

@@ -25,7 +25,7 @@ func TestParseINI(t *testing.T) {
 	for _, testCase := range iniParseTestCases {
 		conf := Conf{}
 		conf.IniData = make(iniDataType)
-		conf.ParseINI(testCase.Path)
+		conf.parseINI(testCase.Path)
 		isEqual := reflect.DeepEqual(testCase.ExpectedResult.IniData, conf.IniData)
 		if !isEqual {
 			fmt.Println("Expect:", testCase.ExpectedResult.IniData)
@@ -49,7 +49,7 @@ func TestHasSection(t *testing.T) {
 
 func init() {
 	// Enable verbose output
-	debug = true
+	debug = false
 
 	// TestParseINI
 	expectedMap := iniDataType{"main": []map[string]string{
