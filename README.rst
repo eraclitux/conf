@@ -34,7 +34,10 @@ You can parse it from your code
         )
 
         func main() {
-                conf := cfgp.Parse("my-conf.ini") 
+                conf, err := cfgp.Parse("my-conf.ini")
+                if err != nil {
+                        panic("Unable to parse configuration file")
+                }
                 //Retrive a specific key
                 if conf.HasKey("main", "cache-size") {
                         key := conf.GetKey("main", "cache-size")

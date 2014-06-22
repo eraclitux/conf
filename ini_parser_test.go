@@ -38,7 +38,10 @@ func TestParseINI(t *testing.T) {
 
 func TestHasSection(t *testing.T) {
 	for _, testCase := range hasSectionCases {
-		conf := Parse(testCase.Path)
+		conf, err := Parse(testCase.Path)
+		if err != nil {
+			t.Fail()
+		}
 		testResult := conf.HasSection(testCase.TestSection)
 		if testResult != testCase.ExpectedResult {
 			fmt.Println("Case:", testCase)

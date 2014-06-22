@@ -13,6 +13,7 @@
 package cfgp
 
 import (
+	"errors"
 	"regexp"
 )
 
@@ -31,19 +32,22 @@ var debug bool = false
 // Parse guesses configuration type by file extention and call specific parser to pupulate Conf.
 //
 // .ini|.txt|.cfg are evaluated as INI files.
-func Parse(path string) *Conf {
+func Parse(path string) (*Conf, error) {
 	conf := Conf{}
 	if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {
 		conf.IniData = make(iniDataType)
 		conf.ConfType = "INI"
-		conf.parseINI(path)
-		return &conf
+		err := conf.parseINI(path)
+		if err != nil {
+			return nil, err
+		}
+		return &conf, nil
 	} else if match, _ := regexp.MatchString(`\.(yaml)$`, path); match {
 		// TODO FIXME
 		conf.ConfType = "YAML"
 		//conf.ParseYAML(path)
 		//return &conf
-		return nil
+		return nil, errors.New("YAML not yet implemented")
 	}
-	return nil
+	return nil, errors.New("Unrecognized format")
 }
