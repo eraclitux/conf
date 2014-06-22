@@ -75,9 +75,17 @@ func (c *Conf) HasSection(section string) bool {
 	return ok
 }
 
+// HasKey returns true if key is present in section.
 func (c *Conf) HasKey(section, key string) bool {
 	if c.ConfType != "INI" {
 		return false
+	}
+	if sectionKeys, ok := c.IniData[section]; ok {
+		for _, kv := range sectionKeys {
+			if _, ok := kv[key]; ok {
+				return true
+			}
+		}
 	}
 	return false
 }
