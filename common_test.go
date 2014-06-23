@@ -15,9 +15,9 @@ func TestParse(t *testing.T) {
 	for _, testCase := range parseTestCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
-			t.Fail()
+			t.FailNow()
 		}
-		if conf == nil || conf.ConfType != testCase.ExpectedResult.ConfType {
+		if conf.ConfType != testCase.ExpectedResult.ConfType {
 			t.Fail()
 		}
 	}
