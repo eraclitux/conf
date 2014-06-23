@@ -17,6 +17,7 @@ import (
 	"regexp"
 )
 
+//TODO make this public
 type iniDataType map[string][]map[string]string
 
 type Conf struct {

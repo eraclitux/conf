@@ -30,6 +30,13 @@ type hasKeyCase struct {
 
 var hasKeyCases []hasKeyCase
 
+type isIniCase struct {
+	Path           string
+	ExpectedResult bool
+}
+
+var isIniCases []isIniCase
+
 func TestParseINI(t *testing.T) {
 	for _, testCase := range iniParseTestCases {
 		conf := Conf{}
@@ -51,7 +58,7 @@ func TestHasSection(t *testing.T) {
 	for _, testCase := range hasSectionCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
-			t.Fail()
+			t.FailNow()
 		}
 		testResult := conf.HasSection(testCase.TestSection)
 		if testResult != testCase.ExpectedResult {
@@ -68,13 +75,32 @@ func TestHasKey(t *testing.T) {
 	for _, testCase := range hasKeyCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
-			t.Fail()
+			t.FailNow()
 		}
 		testResult := conf.HasKey(testCase.TestSection, testCase.TestKey)
 		if testResult != testCase.ExpectedResult {
 			if testing.Verbose() {
 				fmt.Printf("Case: %+v\n", testCase)
 				fmt.Println("testResult:", testResult)
+			}
+			t.Fail()
+		}
+	}
+}
+
+func TestIsIni(t *testing.T) {
+	for _, testCase := range isIniCases {
+		conf, err := Parse(testCase.Path)
+		if err != nil {
+			if testing.Verbose() {
+				fmt.Printf("Error @ case: %+v\n", testCase)
+				fmt.Println(err)
+			}
+			t.FailNow()
+		}
+		if conf.IsIni() != testCase.ExpectedResult {
+			if testing.Verbose() {
+				fmt.Printf("Case: %+v\n", testCase)
 			}
 			t.Fail()
 		}
@@ -130,4 +156,21 @@ func init() {
 		false,
 	}
 	hasKeyCases = append(hasKeyCases, hasKeyTestCase)
+
+	// TestIsIni
+	isIniTestCase := isIniCase{
+		"test_data/one.ini",
+		true,
+	}
+	isIniCases = append(isIniCases, isIniTestCase)
+	isIniTestCase = isIniCase{
+		"test_data/one.yaml",
+		false,
+	}
+	//isIniCases = append(isIniCases, isIniTestCase)
+	isIniTestCase = isIniCase{
+		"test_data/one.cfg",
+		true,
+	}
+	isIniCases = append(isIniCases, isIniTestCase)
 }

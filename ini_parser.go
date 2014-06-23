@@ -66,9 +66,18 @@ func (c *Conf) parseINI(path string) error {
 	return nil
 }
 
+// IsIni returns true whenever Conf has been parsed as INI file.
+func (c *Conf) IsIni() bool {
+	//TODO add tests
+	if c.ConfType == "INI" {
+		return true
+	}
+	return false
+}
+
 // HasSection returns true if file has a specific section.
 func (c *Conf) HasSection(section string) bool {
-	if c.ConfType != "INI" {
+	if !c.IsIni() {
 		return false
 	}
 	_, ok := c.IniData[section]
@@ -77,7 +86,7 @@ func (c *Conf) HasSection(section string) bool {
 
 // HasKey returns true if key is present in section.
 func (c *Conf) HasKey(section, key string) bool {
-	if c.ConfType != "INI" {
+	if !c.IsIni() {
 		return false
 	}
 	if sectionKeys, ok := c.IniData[section]; ok {
@@ -90,8 +99,9 @@ func (c *Conf) HasKey(section, key string) bool {
 	return false
 }
 
+// GetKey returns value given section/key
 func (c *Conf) GetKey(section, key string) string {
-	if c.ConfType != "INI" {
+	if !c.IsIni() {
 		return ""
 	}
 	return ""
@@ -99,7 +109,7 @@ func (c *Conf) GetKey(section, key string) string {
 
 // Returns all key/vaule for specific section
 func (c *Conf) GetSection(section string) []map[string]string {
-	if c.ConfType != "INI" {
+	if !c.IsIni() {
 		return nil
 	}
 	return nil
@@ -107,7 +117,7 @@ func (c *Conf) GetSection(section string) []map[string]string {
 
 // Returns all sections found in file
 func (c *Conf) GetSections(section string) []string {
-	if c.ConfType != "INI" {
+	if !c.IsIni() {
 		return nil
 	}
 	return nil
