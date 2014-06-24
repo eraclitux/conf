@@ -30,6 +30,16 @@ type hasKeyCase struct {
 
 var hasKeyCases []hasKeyCase
 
+type getKeyCase struct {
+	Path           string
+	TestSection    string
+	TestKey        string
+	ExpectedResult string
+	ExpectedError  error
+}
+
+var getKeyCases []getKeyCase
+
 type isIniCase struct {
 	Path           string
 	ExpectedResult bool
@@ -84,6 +94,36 @@ func TestHasKey(t *testing.T) {
 				fmt.Println("testResult:", testResult)
 			}
 			t.Fail()
+		}
+	}
+}
+
+func TestGetKey(t *testing.T) {
+	for _, testCase := range getKeyCases {
+		conf, err := Parse(testCase.Path)
+		if err != nil {
+			if testing.Verbose() {
+				fmt.Print("Unexpected error:", err)
+			}
+			t.FailNow()
+		}
+		testResult, err := conf.GetKey(testCase.TestSection, testCase.TestKey)
+		// TODO compare errors's strings
+		if err == nil && testCase.ExpectedError != nil ||
+			err != nil && testCase.ExpectedError == nil {
+			if testing.Verbose() {
+				fmt.Printf("Case: %+v\n", testCase)
+				fmt.Print("Errors mismatch:", err, testCase.ExpectedError)
+			}
+			t.FailNow()
+		} else {
+			if testResult != testCase.ExpectedResult {
+				if testing.Verbose() {
+					fmt.Printf("Case: %+v\n", testCase)
+					fmt.Println("testResult:", testResult)
+				}
+				t.Fail()
+			}
 		}
 	}
 }
@@ -157,6 +197,24 @@ func init() {
 	}
 	hasKeyCases = append(hasKeyCases, hasKeyTestCase)
 
+	// TestGetKey
+	getKeyTestCase := getKeyCase{
+		"test_data/one.ini",
+		"questions",
+		"wrong-answer",
+		"43",
+		nil,
+	}
+	getKeyCases = append(getKeyCases, getKeyTestCase)
+	getKeyTestCase = getKeyCase{
+		"test_data/one.ini",
+		"questions",
+		"cache",
+		"",
+		fmt.Errorf("Error"),
+	}
+	getKeyCases = append(getKeyCases, getKeyTestCase)
+
 	// TestIsIni
 	isIniTestCase := isIniCase{
 		"test_data/one.ini",
@@ -167,6 +225,7 @@ func init() {
 		"test_data/one.yaml",
 		false,
 	}
+	// TODO Enable this after YAML implementation.
 	//isIniCases = append(isIniCases, isIniTestCase)
 	isIniTestCase = isIniCase{
 		"test_data/one.cfg",

@@ -100,11 +100,19 @@ func (c *Conf) HasKey(section, key string) bool {
 }
 
 // GetKey returns value given section/key
-func (c *Conf) GetKey(section, key string) string {
+func (c *Conf) GetKey(section, key string) (string, error) {
 	if !c.IsIni() {
-		return ""
+		return "", fmt.Errorf("Not an INI file")
 	}
-	return ""
+	if sectionKeys, ok := c.IniData[section]; ok {
+		for _, kv := range sectionKeys {
+			if value, ok := kv[key]; ok {
+				return value, nil
+			}
+		}
+		return "", fmt.Errorf("Key %s not found", key)
+	}
+	return "", fmt.Errorf("Section %s not found", section)
 }
 
 // Returns all key/vaule for specific section
