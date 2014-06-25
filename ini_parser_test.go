@@ -40,6 +40,15 @@ type getKeyCase struct {
 
 var getKeyCases []getKeyCase
 
+type getSectionCase struct {
+	Path           string
+	TestSection    string
+	ExpectedResult []map[string]string
+	ExpectedError  error
+}
+
+var getSectionCases []getSectionCase
+
 type isIniCase struct {
 	Path           string
 	ExpectedResult bool
@@ -128,6 +137,36 @@ func TestGetKey(t *testing.T) {
 	}
 }
 
+func TestGetSection(t *testing.T) {
+	for _, testCase := range getSectionCases {
+		conf, err := Parse(testCase.Path)
+		if err != nil {
+			if testing.Verbose() {
+				fmt.Print("Unexpected error:", err)
+			}
+			t.FailNow()
+		}
+		testResult, err := conf.GetSection(testCase.TestSection)
+		// TODO compare errors's strings
+		if err == nil && testCase.ExpectedError != nil ||
+			err != nil && testCase.ExpectedError == nil {
+			if testing.Verbose() {
+				fmt.Printf("Case: %+v\n", testCase)
+				fmt.Print("Errors mismatch:", err, testCase.ExpectedError)
+			}
+			t.FailNow()
+		} else {
+			isEqual := reflect.DeepEqual(testCase.ExpectedResult, testResult)
+			if !isEqual {
+				if testing.Verbose() {
+					fmt.Printf("Case: %+v\n", testCase)
+					fmt.Println("testResult:", testResult)
+				}
+				t.Fail()
+			}
+		}
+	}
+}
 func TestIsIni(t *testing.T) {
 	for _, testCase := range isIniCases {
 		conf, err := Parse(testCase.Path)
@@ -207,6 +246,14 @@ func init() {
 	}
 	getKeyCases = append(getKeyCases, getKeyTestCase)
 	getKeyTestCase = getKeyCase{
+		"test_data/one.cfg",
+		"default",
+		"the_answer",
+		"42",
+		nil,
+	}
+	getKeyCases = append(getKeyCases, getKeyTestCase)
+	getKeyTestCase = getKeyCase{
 		"test_data/one.ini",
 		"questions",
 		"cache",
@@ -214,6 +261,29 @@ func init() {
 		fmt.Errorf("Error"),
 	}
 	getKeyCases = append(getKeyCases, getKeyTestCase)
+
+	// TestGetSection
+	getSectionTestCase := getSectionCase{
+		"test_data/one.ini",
+		"questions",
+		[]map[string]string{{"answer": "42"}, {"wrong-answer": "43"}},
+		nil,
+	}
+	getSectionCases = append(getSectionCases, getSectionTestCase)
+	getSectionTestCase = getSectionCase{
+		"test_data/one.cfg",
+		"default",
+		[]map[string]string{{"the_answer": "42"}},
+		nil,
+	}
+	getSectionCases = append(getSectionCases, getSectionTestCase)
+	getSectionTestCase = getSectionCase{
+		"test_data/one.ini",
+		"default",
+		nil,
+		fmt.Errorf("Section default not found"),
+	}
+	getSectionCases = append(getSectionCases, getSectionTestCase)
 
 	// TestIsIni
 	isIniTestCase := isIniCase{

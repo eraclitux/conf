@@ -37,8 +37,8 @@ func (c *Conf) parseINI(path string) error {
 	scanner := bufio.NewScanner(file)
 	sectionExp, _ := regexp.Compile(`^(\[).+(\])$`)
 	commentExp, _ := regexp.Compile(`^(#|;)`)
-	// Adds default section "main" in case no one is specified
-	section := "main"
+	// Adds default section "default" in case no one is specified
+	section := "default"
 	for scanner.Scan() {
 		line := scanner.Text()
 		if debug {
@@ -115,18 +115,26 @@ func (c *Conf) GetKey(section, key string) (string, error) {
 	return "", fmt.Errorf("Section %s not found", section)
 }
 
-// Returns all key/vaule for specific section
-func (c *Conf) GetSection(section string) []map[string]string {
+// Returns all key/vaule for specific section.
+func (c *Conf) GetSection(section string) ([]map[string]string, error) {
 	if !c.IsIni() {
-		return nil
+		return nil, fmt.Errorf("Not an INI file")
 	}
-	return nil
+	if sectionKeys, ok := c.IniData[section]; ok {
+		return sectionKeys, nil
+	}
+	return nil, fmt.Errorf("Section %s not found", section)
 }
 
-// Returns all sections found in file
-func (c *Conf) GetSections(section string) []string {
+// Returns all sections's names found in file as a slice of string.
+func (c *Conf) GetSections(section string) ([]string, error) {
 	if !c.IsIni() {
-		return nil
+		return nil, fmt.Errorf("Not an INI file")
 	}
-	return nil
+	sections := make([]string, len(c.IniData))
+	i := 0
+	for k, _ := range c.IniData {
+		sections[i] = k
+	}
+	return sections, nil
 }
