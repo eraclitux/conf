@@ -13,14 +13,14 @@ See `godocs <http://godoc.org/github.com/eraclitux/cfgp>`_ for in depth document
 
 ini files
 ---------
-Given the example ini file (es my-conf.ini)::
-
+Given the example ini file::
         [main]
-        max-hype = 10
+        one = 42
+        three = Zaphod
 
-        [cache]
-        timeout = 60s
-        cache-size=100M
+        [questions]
+        answer = 42
+        wrong-answer = 43
 
 You can parse it from your code  
 
@@ -29,28 +29,33 @@ You can parse it from your code
         pkg main
 
         import (
-                "cfgp"
                 "fmt"
+	        "github.com/eraclitux/cfgp"
         )
 
         func main() {
-                conf, err := cfgp.Parse("my-conf.ini")
+                // Parse will detect configutation file type (INI, YAML) via extention.
+                // Only INI supported for now.
+                conf, err := cfgp.Parse("test_data/example.ini")
                 if err != nil {
                         panic("Unable to parse configuration file")
                 }
-                //Retrive a specific key
-                if conf.HasKey("main", "cache-size") {
-                        key := conf.GetKey("main", "cache-size")
-                        fmt.Print(key)
+                // Check if a specific section exists
+                section := "main"
+                if conf.HasSection(section) {
+                        fmt.Printf("Section %s exists\n", section)
                 }
-                //Print all keys from a specific section
-                section := conf.GetSection("cache")
-                for k, v := range section {
-                        fmt.Print("key:", k, "value:", v)
+                // Check if a specific key exists
+                key, section := "wrong-answer", "questions"
+                if conf.HasKey(section, key) {
+                        fmt.Printf("Key %s exists\n", key)
+                }
+	        // Retrieve a specific key
+                key, section = "answer", "questions"
+                if value, err := conf.GetKey(section, key); err == nil {
+                        fmt.Printf("Key %s is %s\n", key, value)
                 }
         }
-
-
 
 Notes
 =====
