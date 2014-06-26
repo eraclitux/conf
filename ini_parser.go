@@ -115,7 +115,7 @@ func (c *Conf) GetKey(section, key string) (string, error) {
 	return "", fmt.Errorf("Section %s not found", section)
 }
 
-// Returns all key/vaule for specific section.
+// GetSection returns all key/vaule for specific section.
 func (c *Conf) GetSection(section string) ([]map[string]string, error) {
 	if !c.IsIni() {
 		return nil, fmt.Errorf("Not an INI file")
@@ -126,8 +126,8 @@ func (c *Conf) GetSection(section string) ([]map[string]string, error) {
 	return nil, fmt.Errorf("Section %s not found", section)
 }
 
-// Returns all sections's names found in file as a slice of string.
-func (c *Conf) GetSections(section string) ([]string, error) {
+// GetSections returns all sections's names found in file as a slice of string.
+func (c *Conf) GetSections() ([]string, error) {
 	if !c.IsIni() {
 		return nil, fmt.Errorf("Not an INI file")
 	}
@@ -135,6 +135,7 @@ func (c *Conf) GetSections(section string) ([]string, error) {
 	i := 0
 	for k, _ := range c.IniData {
 		sections[i] = k
+		i++
 	}
 	return sections, nil
 }

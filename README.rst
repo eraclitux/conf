@@ -22,7 +22,7 @@ Given the example ini file::
         answer = 42
         wrong-answer = 43
 
-You can parse it from your code  
+Example code:
 
 .. code:: go
 

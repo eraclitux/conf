@@ -49,6 +49,14 @@ type getSectionCase struct {
 
 var getSectionCases []getSectionCase
 
+type getSectionsCase struct {
+	Path           string
+	ExpectedResult []string
+	ExpectedError  error
+}
+
+var getSectionsCases []getSectionsCase
+
 type isIniCase struct {
 	Path           string
 	ExpectedResult bool
@@ -167,6 +175,38 @@ func TestGetSection(t *testing.T) {
 		}
 	}
 }
+
+func TestGetSections(t *testing.T) {
+	for _, testCase := range getSectionsCases {
+		conf, err := Parse(testCase.Path)
+		if err != nil {
+			if testing.Verbose() {
+				fmt.Print("Unexpected error:", err)
+			}
+			t.FailNow()
+		}
+		testResult, err := conf.GetSections()
+		// TODO compare errors's strings
+		if err == nil && testCase.ExpectedError != nil ||
+			err != nil && testCase.ExpectedError == nil {
+			if testing.Verbose() {
+				fmt.Printf("Case: %+v\n", testCase)
+				fmt.Print("Errors mismatch:", err, testCase.ExpectedError)
+			}
+			t.FailNow()
+		} else {
+			isEqual := reflect.DeepEqual(testCase.ExpectedResult, testResult)
+			if !isEqual {
+				if testing.Verbose() {
+					fmt.Printf("Case: %+v\n", testCase)
+					fmt.Println("testResult:", testResult)
+				}
+				t.Fail()
+			}
+		}
+	}
+}
+
 func TestIsIni(t *testing.T) {
 	for _, testCase := range isIniCases {
 		conf, err := Parse(testCase.Path)
@@ -285,6 +325,13 @@ func init() {
 	}
 	getSectionCases = append(getSectionCases, getSectionTestCase)
 
+	// TestGetSections
+	getSectionsTestCase := getSectionsCase{
+		"test_data/one.ini",
+		[]string{"main", "questions"},
+		nil,
+	}
+	getSectionsCases = append(getSectionsCases, getSectionsTestCase)
 	// TestIsIni
 	isIniTestCase := isIniCase{
 		"test_data/one.ini",
