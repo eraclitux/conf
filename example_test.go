@@ -27,8 +27,19 @@ func Example() {
 	if value, err := conf.IniGetKey(section, key); err == nil {
 		fmt.Printf("Key %s is %s\n", key, value)
 	}
+	// Retrieve all keys in a section
+	section = "questions"
+	if section, err := conf.IniGetSection(section); err == nil {
+		for _, kv := range section {
+			for k, v := range kv {
+				fmt.Printf("Key:%s,value:%s; ", k, v)
+			}
+		}
+		fmt.Println("")
+	}
 	// Output:
 	// Section main exists
 	// Key wrong-answer exists
 	// Key answer is 42
+	// Key:answer,value:42; Key:wrong-answer,value:43;
 }

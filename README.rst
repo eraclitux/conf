@@ -51,10 +51,20 @@ Example code:
                 if conf.IniHasKey(section, key) {
                         fmt.Printf("Key %s exists\n", key)
                 }
-                // Retrieve a specific key
+                // Retrieve a specific key in a section
                 key, section = "answer", "questions"
                 if value, err := conf.IniGetKey(section, key); err == nil {
                         fmt.Printf("Key %s is %s\n", key, value)
+                }
+                // Retrieve all keys in a section
+                section = "questions"
+                if section, err := conf.IniGetSection(section); err == nil {
+                        for _, kv := range section {
+                                for k, v := range kv {
+                                        fmt.Printf("Key:%s,value:%s;", k, v)
+                                }
+                        }
+                        fmt.Println("")
                 }
         }
 
