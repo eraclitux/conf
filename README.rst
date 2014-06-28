@@ -14,6 +14,7 @@ See `godocs <http://godoc.org/github.com/eraclitux/cfgp>`_ for in depth document
 ini files
 ---------
 Given the example ini file::
+
         [main]
         one = 42
         three = Zaphod
@@ -42,17 +43,17 @@ Example code:
                 }
                 // Check if a specific section exists
                 section := "main"
-                if conf.HasSection(section) {
+                if conf.IniHasSection(section) {
                         fmt.Printf("Section %s exists\n", section)
                 }
                 // Check if a specific key exists
                 key, section := "wrong-answer", "questions"
-                if conf.HasKey(section, key) {
+                if conf.IniHasKey(section, key) {
                         fmt.Printf("Key %s exists\n", key)
                 }
-	        // Retrieve a specific key
+                // Retrieve a specific key
                 key, section = "answer", "questions"
-                if value, err := conf.GetKey(section, key); err == nil {
+                if value, err := conf.IniGetKey(section, key); err == nil {
                         fmt.Printf("Key %s is %s\n", key, value)
                 }
         }

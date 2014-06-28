@@ -81,13 +81,13 @@ func TestParseINI(t *testing.T) {
 
 }
 
-func TestHasSection(t *testing.T) {
+func TestIniHasSection(t *testing.T) {
 	for _, testCase := range hasSectionCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
 			t.FailNow()
 		}
-		testResult := conf.HasSection(testCase.TestSection)
+		testResult := conf.IniHasSection(testCase.TestSection)
 		if testResult != testCase.ExpectedResult {
 			if testing.Verbose() {
 				fmt.Printf("Case: %+v\n", testCase)
@@ -98,13 +98,13 @@ func TestHasSection(t *testing.T) {
 	}
 }
 
-func TestHasKey(t *testing.T) {
+func TestIniHasKey(t *testing.T) {
 	for _, testCase := range hasKeyCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
 			t.FailNow()
 		}
-		testResult := conf.HasKey(testCase.TestSection, testCase.TestKey)
+		testResult := conf.IniHasKey(testCase.TestSection, testCase.TestKey)
 		if testResult != testCase.ExpectedResult {
 			if testing.Verbose() {
 				fmt.Printf("Case: %+v\n", testCase)
@@ -115,7 +115,7 @@ func TestHasKey(t *testing.T) {
 	}
 }
 
-func TestGetKey(t *testing.T) {
+func TestIniGetKey(t *testing.T) {
 	for _, testCase := range getKeyCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
@@ -124,7 +124,7 @@ func TestGetKey(t *testing.T) {
 			}
 			t.FailNow()
 		}
-		testResult, err := conf.GetKey(testCase.TestSection, testCase.TestKey)
+		testResult, err := conf.IniGetKey(testCase.TestSection, testCase.TestKey)
 		// TODO compare errors's strings
 		if err == nil && testCase.ExpectedError != nil ||
 			err != nil && testCase.ExpectedError == nil {
@@ -145,7 +145,7 @@ func TestGetKey(t *testing.T) {
 	}
 }
 
-func TestGetSection(t *testing.T) {
+func TestIniGetSection(t *testing.T) {
 	for _, testCase := range getSectionCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
@@ -154,7 +154,7 @@ func TestGetSection(t *testing.T) {
 			}
 			t.FailNow()
 		}
-		testResult, err := conf.GetSection(testCase.TestSection)
+		testResult, err := conf.IniGetSection(testCase.TestSection)
 		// TODO compare errors's strings
 		if err == nil && testCase.ExpectedError != nil ||
 			err != nil && testCase.ExpectedError == nil {
@@ -176,7 +176,7 @@ func TestGetSection(t *testing.T) {
 	}
 }
 
-func TestGetSections(t *testing.T) {
+func TestIniGetSections(t *testing.T) {
 	for _, testCase := range getSectionsCases {
 		conf, err := Parse(testCase.Path)
 		if err != nil {
@@ -185,7 +185,7 @@ func TestGetSections(t *testing.T) {
 			}
 			t.FailNow()
 		}
-		testResult, err := conf.GetSections()
+		testResult, err := conf.IniGetSections()
 		// TODO compare errors's strings
 		if err == nil && testCase.ExpectedError != nil ||
 			err != nil && testCase.ExpectedError == nil {
@@ -246,7 +246,7 @@ func init() {
 	}
 	iniParseTestCases = append(iniParseTestCases, iniTestCase)
 
-	// TestHasSection
+	// TestIniHasSection
 	hasSectionTestCase := hasSectionCase{
 		"test_data/one.ini",
 		"questions",
@@ -260,7 +260,7 @@ func init() {
 	}
 	hasSectionCases = append(hasSectionCases, hasSectionTestCase)
 
-	// TestHasKey
+	// TestIniHasKey
 	hasKeyTestCase := hasKeyCase{
 		"test_data/one.ini",
 		"questions",
@@ -276,7 +276,7 @@ func init() {
 	}
 	hasKeyCases = append(hasKeyCases, hasKeyTestCase)
 
-	// TestGetKey
+	// TestIniGetKey
 	getKeyTestCase := getKeyCase{
 		"test_data/one.ini",
 		"questions",
@@ -302,7 +302,7 @@ func init() {
 	}
 	getKeyCases = append(getKeyCases, getKeyTestCase)
 
-	// TestGetSection
+	// TestIniGetSection
 	getSectionTestCase := getSectionCase{
 		"test_data/one.ini",
 		"questions",
@@ -325,7 +325,7 @@ func init() {
 	}
 	getSectionCases = append(getSectionCases, getSectionTestCase)
 
-	// TestGetSections
+	// TestIniGetSections
 	getSectionsTestCase := getSectionsCase{
 		"test_data/one.ini",
 		[]string{"main", "questions"},

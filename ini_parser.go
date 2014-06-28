@@ -75,8 +75,8 @@ func (c *Conf) IsIni() bool {
 	return false
 }
 
-// HasSection returns true if file has a specific section.
-func (c *Conf) HasSection(section string) bool {
+// IniHasSection returns true if file has a specific section.
+func (c *Conf) IniHasSection(section string) bool {
 	if !c.IsIni() {
 		return false
 	}
@@ -84,8 +84,8 @@ func (c *Conf) HasSection(section string) bool {
 	return ok
 }
 
-// HasKey returns true if key is present in section.
-func (c *Conf) HasKey(section, key string) bool {
+// IniHasKey returns true if key is present in section.
+func (c *Conf) IniHasKey(section, key string) bool {
 	if !c.IsIni() {
 		return false
 	}
@@ -99,8 +99,8 @@ func (c *Conf) HasKey(section, key string) bool {
 	return false
 }
 
-// GetKey returns value given section/key
-func (c *Conf) GetKey(section, key string) (string, error) {
+// IniGetKey returns value given section/key
+func (c *Conf) IniGetKey(section, key string) (string, error) {
 	if !c.IsIni() {
 		return "", fmt.Errorf("Not an INI file")
 	}
@@ -115,8 +115,8 @@ func (c *Conf) GetKey(section, key string) (string, error) {
 	return "", fmt.Errorf("Section %s not found", section)
 }
 
-// GetSection returns all key/vaule for specific section.
-func (c *Conf) GetSection(section string) ([]map[string]string, error) {
+// IniGetSection returns all key/vaule for specific section.
+func (c *Conf) IniGetSection(section string) ([]map[string]string, error) {
 	if !c.IsIni() {
 		return nil, fmt.Errorf("Not an INI file")
 	}
@@ -126,8 +126,8 @@ func (c *Conf) GetSection(section string) ([]map[string]string, error) {
 	return nil, fmt.Errorf("Section %s not found", section)
 }
 
-// GetSections returns all sections's names found in file as a slice of string.
-func (c *Conf) GetSections() ([]string, error) {
+// IniGetSections returns all sections's names found in file as a slice of string.
+func (c *Conf) IniGetSections() ([]string, error) {
 	if !c.IsIni() {
 		return nil, fmt.Errorf("Not an INI file")
 	}
