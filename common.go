@@ -32,7 +32,7 @@ var debug bool = false
 
 // Parse guesses configuration type by file extention and call specific parser to pupulate Conf.
 //
-// .ini|.txt|.cfg are evaluated as INI files.
+// (.ini|.txt|.cfg) are evaluated as INI files.
 func Parse(path string) (*Conf, error) {
 	conf := Conf{}
 	if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {

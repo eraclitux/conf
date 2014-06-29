@@ -70,4 +70,4 @@ Example code:
 
 Notes
 =====
-Work in progress
+YAML not yet supported.

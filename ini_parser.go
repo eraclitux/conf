@@ -13,6 +13,12 @@ import (
 // parseKeyValue given one line encoded like "key = value" returns corresponding map.
 func parseKeyValue(line string) map[string]string {
 	kvm := make(map[string]string)
+	// Check for inline comments
+	if strings.Contains(line, ";") {
+		line = strings.Split(line, ";")[0]
+	} else if strings.Contains(line, "#") {
+		line = strings.Split(line, "#")[0]
+	}
 	line = strings.Replace(line, " ", "", -1)
 	// Does nothing if no "=" sign.
 	if strings.Contains(line, "=") {
