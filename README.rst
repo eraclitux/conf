@@ -1,3 +1,11 @@
+====
+cfgp
+====
+
+|image0|_
+
+.. |image0| image:: https://godoc.org/github.com/eraclitux/cfgp?status.png
+.. _image0: https://godoc.org/github.com/eraclitux/cfgp
 
 .. contents::
 
