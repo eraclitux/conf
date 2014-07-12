@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -143,5 +144,8 @@ func (c *Conf) IniGetSections() ([]string, error) {
 		sections[i] = k
 		i++
 	}
+	sortableSections := sort.StringSlice(sections)
+	sortableSections.Sort()
+	sections = []string(sortableSections)
 	return sections, nil
 }
