@@ -15,6 +15,8 @@ A go package for configuration files parsing.
 
 Aims to be multiformat, only INI files supported for now.
 
+This is a work in progress, better packages are out there.
+
 Usage and examples
 ==================
 See `godocs <http://godoc.org/github.com/eraclitux/cfgp>`_ for in depth documentation.

@@ -10,6 +10,8 @@
 //	https://en.wikipedia.org/wiki/INI_file
 //
 // YAML support is on the roadmap.
+//
+// This is a work in progress, better packages are out there.
 package cfgp
 
 import (
