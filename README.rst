@@ -13,7 +13,7 @@ Intro
 =====
 A go package for configuration files parsing.
 
-Aims to be multiformat, only INI files supported for now.
+It aims to be modular and easily extendible, only INI format supported for now.
 
 This is a work in progress, better packages are out there.
 
@@ -77,7 +77,3 @@ Example code:
                         fmt.Println("")
                 }
         }
-
-Notes
-=====
-YAML not yet supported.

@@ -1,15 +1,13 @@
 // cfgp - go configuration file parser package
 // Copyright (c) 2014 Andrea Masi
 
-// Configuration files parser package fo Go.
+// Package cfgp is a configuration file parser fo Go.
 //
-// Tries to be modular and extendible to support different formats.
+// It tries to be modular and easily extendible to support different formats.
 //
 // Only INI format supported for now. Files must follows INI informal standard:
 //
 //	https://en.wikipedia.org/wiki/INI_file
-//
-// YAML support is on the roadmap.
 //
 // This is a work in progress, better packages are out there.
 package cfgp
@@ -19,9 +17,10 @@ import (
 	"regexp"
 )
 
-//TODO make this public
+// FIXME make this public?
 type iniDataType map[string][]map[string]string
 
+// Conf stores parsed data from configuration file
 type Conf struct {
 	// iniDataType is map[string][]map[string]string
 	IniData iniDataType
@@ -30,6 +29,7 @@ type Conf struct {
 	ConfType string
 }
 
+// TODO use conditional tags to enable dubug
 var debug bool = false
 
 // Parse guesses configuration type by file extention and call specific parser to pupulate Conf.
