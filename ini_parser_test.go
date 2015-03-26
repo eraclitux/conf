@@ -227,9 +227,6 @@ func TestIsIni(t *testing.T) {
 }
 
 func init() {
-	// Enable verbose output
-	debug = false
-
 	// TestParseINI
 	expectedMap := iniDataType{"main": []map[string]string{
 		{"one": "42"},

@@ -48,9 +48,7 @@ func (c *Conf) parseINI(path string) error {
 	section := "default"
 	for scanner.Scan() {
 		line := scanner.Text()
-		if debug {
-			fmt.Println("line parsed:", line)
-		}
+		debugPrintln("line parsed:", line)
 		if commentExp.MatchString(line) {
 			continue
 		} else if sectionExp.MatchString(line) {
@@ -67,9 +65,7 @@ func (c *Conf) parseINI(path string) error {
 	if err := scanner.Err(); err != nil {
 		return err
 	}
-	if debug {
-		fmt.Println("returning map:", c.IniData)
-	}
+	debugPrintln("returning map:", c.IniData)
 	return nil
 }
 

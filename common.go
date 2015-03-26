@@ -29,9 +29,6 @@ type Conf struct {
 	ConfType string
 }
 
-// TODO use conditional tags to enable dubug
-var debug bool = false
-
 // Parse guesses configuration type by file extention and call specific parser to pupulate Conf.
 //
 // (.ini|.txt|.cfg) are evaluated as INI files.

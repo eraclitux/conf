@@ -13,7 +13,7 @@ Intro
 =====
 A go package for configuration files parsing.
 
-It aims to be modular and easily extendible, only INI format supported for now.
+It aims to be modular and easily extendible to support other formats. Only INI format supported for now.
 
 This is a work in progress, better packages are out there.
 
