@@ -43,7 +43,7 @@ func Parse(path string) (*Conf, error) {
 		}
 		return &conf, nil
 	} else if match, _ := regexp.MatchString(`\.(yaml)$`, path); match {
-		// TODO FIXME
+		// TODO
 		conf.ConfType = "YAML"
 		//conf.ParseYAML(path)
 		//return &conf

@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/eraclitux/stracer"
 )
 
 // parseKeyValue given one line encoded like "key = value" returns corresponding map.
@@ -48,7 +50,7 @@ func (c *Conf) parseINI(path string) error {
 	section := "default"
 	for scanner.Scan() {
 		line := scanner.Text()
-		debugPrintln("line parsed:", line)
+		stracer.Traceln("line parsed:", line)
 		if commentExp.MatchString(line) {
 			continue
 		} else if sectionExp.MatchString(line) {
@@ -65,7 +67,7 @@ func (c *Conf) parseINI(path string) error {
 	if err := scanner.Err(); err != nil {
 		return err
 	}
-	debugPrintln("returning map:", c.IniData)
+	stracer.Traceln("returning map:", c.IniData)
 	return nil
 }
 
