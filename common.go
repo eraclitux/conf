@@ -17,37 +17,17 @@ import (
 	"regexp"
 )
 
-// FIXME make this public?
-type iniDataType map[string][]map[string]string
-
-// Conf stores parsed data from configuration file
-type Conf struct {
-	// iniDataType is map[string][]map[string]string
-	IniData iniDataType
-	// Store the configuration file format (INI, YAML etc)
-	// Actually only INI supported
-	ConfType string
-}
-
 // Parse guesses configuration type by file extention and call specific parser to pupulate Conf.
-//
 // (.ini|.txt|.cfg) are evaluated as INI files.
-func Parse(path string) (*Conf, error) {
-	conf := Conf{}
+func Parse(path string, confPtr interface{}) error {
 	if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {
-		conf.IniData = make(iniDataType)
-		conf.ConfType = "INI"
-		err := conf.parseINI(path)
+		err := parseINI(path, confPtr)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return &conf, nil
+		return nil
 	} else if match, _ := regexp.MatchString(`\.(yaml)$`, path); match {
-		// TODO
-		conf.ConfType = "YAML"
-		//conf.ParseYAML(path)
-		//return &conf
-		return nil, errors.New("YAML not yet implemented")
+		return errors.New("YAML not yet implemented")
 	}
-	return nil, errors.New("Unrecognized format")
+	return errors.New("unrecognized file format")
 }

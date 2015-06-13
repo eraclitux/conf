@@ -4,19 +4,22 @@ package cfgp
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"os"
+	"reflect"
 	"regexp"
-	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/eraclitux/stracer"
 )
 
-// parseKeyValue given one line encoded like "key = value" returns corresponding map.
-func parseKeyValue(line string) map[string]string {
-	kvm := make(map[string]string)
-	// Check for inline comments
+//FIXME has a [2]string sense instead of map[string]string?
+
+// parseKeyValue given one line encoded like "key = value" returns corresponding
+// []string with "key" > kv[0] and "value" > kv[1].
+func parseKeyValue(line string) []string {
+	// Check for inline comments.
 	if strings.Contains(line, ";") {
 		line = strings.Split(line, ";")[0]
 	} else if strings.Contains(line, "#") {
@@ -25,32 +28,65 @@ func parseKeyValue(line string) map[string]string {
 	line = strings.Replace(line, " ", "", -1)
 	// Does nothing if no "=" sign.
 	if strings.Contains(line, "=") {
-		values := strings.Split(line, "=")
-		kvm[values[0]] = values[1]
+		return strings.Split(line, "=")
+
 	}
-	return kvm
+	return nil
+}
+
+func getStructValue(confPtr interface{}) (reflect.Value, error) {
+	v := reflect.ValueOf(confPtr)
+	if v.Kind() == reflect.Ptr {
+		return v.Elem(), nil
+	}
+	return reflect.Value{}, errors.New("pointer to struct expected")
+}
+
+func putInStruct(structValue reflect.Value, kv []string) error {
+	// FIXME handle different types.
+	stracer.Traceln("handling", kv)
+	f := strings.Title(kv[0])
+	fieldValue := structValue.FieldByName(f)
+	stracer.Traceln("k to title:", f, "type:", fieldValue.Kind(), "is settable:", fieldValue.CanSet())
+	if fieldValue.CanSet() {
+		switch fieldValue.Kind() {
+		case reflect.Int:
+			i, err := strconv.Atoi(kv[1])
+			if err != nil {
+				return err
+			}
+			fieldValue.SetInt(int64(i))
+		case reflect.String:
+			fieldValue.SetString(kv[1])
+		}
+	}
+	return nil
 }
 
 // parseINI opens configuration file specified by path and populate Conf.IniData.
-// All values as returned as strings, the caller has to make required casting.
 // Files must follows INI informal standard:
 //
 //	https://en.wikipedia.org/wiki/INI_file
 //
-func (c *Conf) parseINI(path string) error {
+func parseINI(path string, confPtr interface{}) error {
+	conf := make(map[string][][]string)
+	structValue, err := getStructValue(confPtr)
+	if err != nil {
+		return err
+	}
 	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
-	sectionExp, _ := regexp.Compile(`^(\[).+(\])$`)
-	commentExp, _ := regexp.Compile(`^(#|;)`)
+	sectionExp := regexp.MustCompile(`^(\[).+(\])$`)
+	commentExp := regexp.MustCompile(`^(#|;)`)
 	// Adds default section "default" in case no one is specified
 	section := "default"
 	for scanner.Scan() {
 		line := scanner.Text()
-		stracer.Traceln("line parsed:", line)
+		stracer.Traceln("raw line to parse:", line)
 		if commentExp.MatchString(line) {
 			continue
 		} else if sectionExp.MatchString(line) {
@@ -61,89 +97,13 @@ func (c *Conf) parseINI(path string) error {
 		kv := parseKeyValue(line)
 		// This even prevents empty line to be added
 		if len(kv) > 0 {
-			c.IniData[section] = append(c.IniData[section], kv)
+			putInStruct(structValue, kv)
+			conf[section] = append(conf[section], kv)
 		}
 	}
 	if err := scanner.Err(); err != nil {
 		return err
 	}
-	stracer.Traceln("returning map:", c.IniData)
+	stracer.Traceln("coded map:", conf)
 	return nil
-}
-
-// IsIni returns true whenever Conf has been parsed as INI file.
-func (c *Conf) IsIni() bool {
-	//TODO add tests
-	if c.ConfType == "INI" {
-		return true
-	}
-	return false
-}
-
-// IniHasSection returns true if file has a specific section.
-func (c *Conf) IniHasSection(section string) bool {
-	if !c.IsIni() {
-		return false
-	}
-	_, ok := c.IniData[section]
-	return ok
-}
-
-// IniHasKey returns true if key is present in section.
-func (c *Conf) IniHasKey(section, key string) bool {
-	if !c.IsIni() {
-		return false
-	}
-	if sectionKeys, ok := c.IniData[section]; ok {
-		for _, kv := range sectionKeys {
-			if _, ok := kv[key]; ok {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-// IniGetKey returns value given section/key
-func (c *Conf) IniGetKey(section, key string) (string, error) {
-	if !c.IsIni() {
-		return "", fmt.Errorf("Not an INI file")
-	}
-	if sectionKeys, ok := c.IniData[section]; ok {
-		for _, kv := range sectionKeys {
-			if value, ok := kv[key]; ok {
-				return value, nil
-			}
-		}
-		return "", fmt.Errorf("Key %s not found", key)
-	}
-	return "", fmt.Errorf("Section %s not found", section)
-}
-
-// IniGetSection returns all key/vaule for specific section.
-func (c *Conf) IniGetSection(section string) ([]map[string]string, error) {
-	if !c.IsIni() {
-		return nil, fmt.Errorf("Not an INI file")
-	}
-	if sectionKeys, ok := c.IniData[section]; ok {
-		return sectionKeys, nil
-	}
-	return nil, fmt.Errorf("Section %s not found", section)
-}
-
-// IniGetSections returns all sections's names found in file as a slice of string.
-func (c *Conf) IniGetSections() ([]string, error) {
-	if !c.IsIni() {
-		return nil, fmt.Errorf("Not an INI file")
-	}
-	sections := make([]string, len(c.IniData))
-	i := 0
-	for k, _ := range c.IniData {
-		sections[i] = k
-		i++
-	}
-	sortableSections := sort.StringSlice(sections)
-	sortableSections.Sort()
-	sections = []string(sortableSections)
-	return sections, nil
 }
