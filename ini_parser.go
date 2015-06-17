@@ -14,7 +14,7 @@ import (
 	"github.com/eraclitux/stracer"
 )
 
-//FIXME has a [2]string sense instead of map[string]string?
+var ErrNeedPointer = errors.New("pointer to struct expected")
 
 // parseKeyValue given one line encoded like "key = value" returns corresponding
 // []string with "key" > kv[0] and "value" > kv[1].
@@ -39,15 +39,15 @@ func getStructValue(confPtr interface{}) (reflect.Value, error) {
 	if v.Kind() == reflect.Ptr {
 		return v.Elem(), nil
 	}
-	return reflect.Value{}, errors.New("pointer to struct expected")
+	return reflect.Value{}, ErrNeedPointer
 }
 
 func putInStruct(structValue reflect.Value, kv []string) error {
 	// FIXME handle different types.
-	stracer.Traceln("handling", kv)
+	stracer.Traceln("handling pair:", kv)
 	f := strings.Title(kv[0])
 	fieldValue := structValue.FieldByName(f)
-	stracer.Traceln("k to title:", f, "type:", fieldValue.Kind(), "is settable:", fieldValue.CanSet())
+	stracer.Traceln("k to title:", f, "kind in struct:", fieldValue.Kind(), "is settable:", fieldValue.CanSet())
 	if fieldValue.CanSet() {
 		switch fieldValue.Kind() {
 		case reflect.Int:
