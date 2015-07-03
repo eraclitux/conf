@@ -4,7 +4,6 @@ package cfgp
 
 import (
 	"bufio"
-	"errors"
 	"os"
 	"reflect"
 	"regexp"
@@ -13,8 +12,6 @@ import (
 
 	"github.com/eraclitux/stracer"
 )
-
-var ErrNeedPointer = errors.New("pointer to struct expected")
 
 // parseKeyValue given one line encoded like "key = value" returns corresponding
 // []string with "key" > kv[0] and "value" > kv[1].
@@ -34,20 +31,11 @@ func parseKeyValue(line string) []string {
 	return nil
 }
 
-func getStructValue(confPtr interface{}) (reflect.Value, error) {
-	v := reflect.ValueOf(confPtr)
-	if v.Kind() == reflect.Ptr {
-		return v.Elem(), nil
-	}
-	return reflect.Value{}, ErrNeedPointer
-}
-
 func putInStruct(structValue reflect.Value, kv []string) error {
 	// FIXME handle different types.
 	stracer.Traceln("handling pair:", kv)
 	f := strings.Title(kv[0])
 	fieldValue := structValue.FieldByName(f)
-	stracer.Traceln("k to title:", f, "kind in struct:", fieldValue.Kind(), "is settable:", fieldValue.CanSet())
 	if fieldValue.CanSet() {
 		switch fieldValue.Kind() {
 		case reflect.Int:
@@ -58,22 +46,29 @@ func putInStruct(structValue reflect.Value, kv []string) error {
 			fieldValue.SetInt(int64(i))
 		case reflect.String:
 			fieldValue.SetString(kv[1])
+		case reflect.Bool:
+			b, err := strconv.ParseBool(kv[1])
+			if err != nil {
+				return err
+			}
+			fieldValue.SetBool(b)
+		default:
+			return ErrUnknownFlagType
 		}
 	}
 	return nil
 }
 
-// parseINI opens configuration file specified by path and populate Conf.IniData.
+// parseINI opens configuration file specified by path and populate
+// passed struct.
 // Files must follows INI informal standard:
 //
 //	https://en.wikipedia.org/wiki/INI_file
 //
-func parseINI(path string, confPtr interface{}) error {
+// FIXME Current implementation stores info about section but
+// discards it. Use reflection tags to specify which section to use.
+func parseINI(path string, structValue reflect.Value) error {
 	conf := make(map[string][][]string)
-	structValue, err := getStructValue(confPtr)
-	if err != nil {
-		return err
-	}
 	file, err := os.Open(path)
 	if err != nil {
 		return err

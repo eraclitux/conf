@@ -20,7 +20,8 @@ var iniParseTestCases []iniParseCase
 func TestParseINI(t *testing.T) {
 	for _, testCase := range iniParseTestCases {
 		s := exampleStruct{}
-		parseINI(testCase.Path, &s)
+		v, _ := getStructValue(&s)
+		parseINI(testCase.Path, v)
 		isEqual := reflect.DeepEqual(testCase.ExpectedResult, s)
 		if !isEqual {
 			if testing.Verbose() {

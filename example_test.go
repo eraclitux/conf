@@ -10,7 +10,8 @@ import (
 type myConf struct {
 	Address         string
 	Port            string
-	Number_of_users int
+	Number_of_users int `cfgp:"one,two,three"`
+	Daemon          bool
 }
 
 func Example() {
