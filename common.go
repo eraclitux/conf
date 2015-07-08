@@ -1,7 +1,16 @@
 // cfgp - go configuration file parser package
-// Copyright (c) 2014 Andrea Masi
+// Copyright (c) 2015 Andrea Masi
 
 // Package cfgp is a configuration parser fo Go.
+//
+// Just define a struct with needed configurations. Values are then taken from multiple source
+// in this order of precendece:
+//
+// - env variables
+//
+// - command line arguments (which are automagically created and parsed)
+//
+// - configuration file
 //
 // It tries to be modular and easily extendible to support different formats.
 //
@@ -27,7 +36,7 @@ import (
 
 var ErrNeedPointer = errors.New("cfgp: pointer to struct expected")
 var ErrFileFormat = errors.New("cfgp: unrecognized file format, only (ini|txt|cfg) supported")
-var ErrUnknownFlagType = errors.New("cfgp: unknown kind flag")
+var ErrUnknownFlagType = errors.New("cfgp: unknown flag type")
 
 func getStructValue(confPtr interface{}) (reflect.Value, error) {
 	v := reflect.ValueOf(confPtr)
@@ -79,18 +88,40 @@ func (s *myFlag) Set(arg string) error {
 	return nil
 }
 
+func helpMessageFromTags(f reflect.StructField) (string, bool) {
+	t := f.Tag.Get("cfgp")
+	tags := strings.Split(t, ",")
+	if len(tags) == 3 {
+		return tags[1], true
+	}
+	return "", false
+}
+
 func makeHelpMessage(f reflect.StructField) string {
-	// TODO use reflect' tags to get help message
-	stracer.Traceln("tag:", f.Tag.Get("cfgp"))
+	var helpM string
 	switch f.Type.Kind() {
 	case reflect.Int:
-		return "set an int value"
+		if m, ok := helpMessageFromTags(f); ok {
+			helpM = m + ", an int value"
+		} else {
+			helpM = "set an int value"
+		}
 	case reflect.String:
-		return "set a string value"
+		if m, ok := helpMessageFromTags(f); ok {
+			helpM = m + ", a string value"
+		} else {
+			helpM = "set a string value"
+		}
 	case reflect.Bool:
-		return "set a bool value"
+		if m, ok := helpMessageFromTags(f); ok {
+			helpM = m + ", a bool value"
+		} else {
+			helpM = "set a bool value"
+		}
+	default:
+		helpM = "unknown flag kind"
 	}
-	return "give a value to flag"
+	return helpM
 }
 
 func isBool(v reflect.Value) bool {
@@ -100,9 +131,22 @@ func isBool(v reflect.Value) bool {
 	return false
 }
 
+func nameFromTags(f reflect.StructField) (string, bool) {
+	t := f.Tag.Get("cfgp")
+	tags := strings.Split(t, ",")
+	if len(tags) == 3 {
+		return tags[0], true
+	}
+	return "", false
+}
+
+// FIXME can we semplify using structType := structValue.Type()?
 func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSet) {
 	name := strings.ToLower(f.Name)
-	stracer.Traceln("Creating flag:", name)
+	if n, ok := nameFromTags(f); ok {
+		name = n
+	}
+	stracer.Traceln("creating flag:", name)
 	fs.Var(&myFlag{f, fieldValue, isBool(fieldValue)}, name, makeHelpMessage(f))
 }
 
@@ -121,7 +165,7 @@ func parseFlags(s reflect.Value) error {
 	}
 	err := flagSet.Parse(os.Args[1:])
 	if err != nil {
-		stracer.Traceln("This is not executed.")
+		stracer.Traceln("this is not executed")
 		return err
 	}
 	return nil

@@ -14,7 +14,7 @@ import (
 )
 
 // parseKeyValue given one line encoded like "key = value" returns corresponding
-// []string with "key" > kv[0] and "value" > kv[1].
+// []string with kv[0] = "key" and > kv[1] = value".
 func parseKeyValue(line string) []string {
 	// Check for inline comments.
 	if strings.Contains(line, ";") {
@@ -31,11 +31,30 @@ func parseKeyValue(line string) []string {
 	return nil
 }
 
+func getFieldByTagName(structValue reflect.Value, name string) reflect.Value {
+	field := reflect.Value{}
+	structType := structValue.Type()
+	for i := 0; i < structValue.NumField(); i++ {
+		if n, ok := nameFromTags(structType.Field(i)); ok {
+			stracer.Traceln("found a key by tag", n, name)
+			if n == name {
+				field = structValue.Field(i)
+			}
+		}
+	}
+	return field
+}
+
+// putInStruct does not return error for field not found.
 func putInStruct(structValue reflect.Value, kv []string) error {
 	// FIXME handle different types.
-	stracer.Traceln("handling pair:", kv)
+	stracer.Traceln("storing pair:", kv)
 	f := strings.Title(kv[0])
 	fieldValue := structValue.FieldByName(f)
+	// Field not found, try to get it by tags.
+	if !fieldValue.IsValid() {
+		fieldValue = getFieldByTagName(structValue, kv[0])
+	}
 	if fieldValue.CanSet() {
 		switch fieldValue.Kind() {
 		case reflect.Int:
