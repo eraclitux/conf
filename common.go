@@ -6,18 +6,24 @@
 // Just define a struct with needed configurations. Values are then taken from multiple source
 // in this order of precendece:
 //
-// - env variables
+// 	- env variables
+// 	- command line arguments (which are automagically created and parsed)
+// 	- configuration file
 //
-// - command line arguments (which are automagically created and parsed)
+// Tags
 //
-// - configuration file
-//
-// It tries to be modular and easily extendible to support different formats.
+// Default is to use field names in struct to create flags,
+// search for env variables and configuration into files.
+// Tags can be used to specify different name, flag help message
+// in command line, and section in conf file.
+// Format is:
+//	<name>,<help message>,<section in file>
 //
 // For file, only INI format supported for now. Files must follows INI informal standard:
 //
 //	https://en.wikipedia.org/wiki/INI_file
 //
+// It tries to be modular and easily extendible to support different formats.
 // This is a work in progress, better packages are out there.
 package cfgp
 
@@ -171,8 +177,10 @@ func parseFlags(s reflect.Value) error {
 	return nil
 }
 
-// Parse guesses configuration type by file extention and call specific parser.
-// (.ini|.txt|.cfg) are evaluated as INI files.
+// Parse popolate passed struct (via pointer) with configuration from varoius source.
+// It guesses configuration type by file extention and call specific parser.
+// (.ini|.txt|.cfg) are evaluated as INI files which is to only format supported for now.
+// path can be an empty string to disable file parsing.
 func Parse(path string, confPtr interface{}) error {
 	structValue, err := getStructValue(confPtr)
 	if err != nil {
@@ -190,6 +198,9 @@ func Parse(path string, confPtr interface{}) error {
 			return ErrFileFormat
 		}
 	}
-	parseFlags(structValue)
+	err = parseFlags(structValue)
+	if err != nil {
+		return err
+	}
 	return nil
 }

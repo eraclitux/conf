@@ -8,10 +8,10 @@ import (
 )
 
 type myConf struct {
-	Address         string
-	Port            string
-	Number_of_users int `cfgp:"one,two,three"`
-	Daemon          bool
+	Address       string
+	Port          string
+	NumberOfUsers int `cfgp:"users,number of users,"`
+	Daemon        bool
 }
 
 func Example() {
@@ -22,11 +22,11 @@ func Example() {
 	}
 	fmt.Println("address:", c.Address)
 	fmt.Println("port:", c.Port)
-	fmt.Println("number_of_users:", c.Number_of_users)
+	fmt.Println("number of users:", c.NumberOfUsers)
 
 	//Output:
 	//address: localhost
 	//port: 8080
-	//number_of_users: 42
+	//number of users: 42
 
 }
