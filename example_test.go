@@ -8,8 +8,11 @@ import (
 )
 
 type myConf struct {
-	Address       string
-	Port          string
+	Address string
+	Port    string
+	// A command line argument "users", which expects an int value,
+	// will be created.
+	// Same key name will be searched in configuration file.
 	NumberOfUsers int `cfgp:"users,number of users,"`
 	Daemon        bool
 }

@@ -3,7 +3,7 @@
 
 // Package cfgp is a configuration parser fo Go.
 //
-// Just define a struct with needed configurations. Values are then taken from multiple source
+// Just define a struct with needed configuration. Values are then taken from multiple source
 // in this order of precendece:
 //
 // 	- env variables
@@ -12,18 +12,30 @@
 //
 // Tags
 //
-// Default is to use field names in struct to create flags,
-// search for env variables and configuration into files.
-// Tags can be used to specify different name, flag help message
-// in command line, and section in conf file.
+// Default is to use lower cased field names in struct to create command line arguments.
+// Tags can be used to specify different names, command line help message
+// and section in conf file.
+//
 // Format is:
 //	<name>,<help message>,<section in file>
 //
-// For file, only INI format supported for now. Files must follows INI informal standard:
+// Simplest configuration file
+//
+// Files ending with:
+// 	ini|txt|cfg
+// will be parsed as INI informal standard:
 //
 //	https://en.wikipedia.org/wiki/INI_file
 //
-// It tries to be modular and easily extendible to support different formats.
+// First letter of every key found upper cased and than is searched
+// for a struct field with same name:
+// 	user -> User
+//	portNumber -> PortNumber
+// If such field name is not found than comparisson is made against
+// key specified as first element in tag.
+//
+// cfgp tries to be modular and easily extendible to support different formats.
+//
 // This is a work in progress, better packages are out there.
 package cfgp
 
@@ -177,7 +189,7 @@ func parseFlags(s reflect.Value) error {
 	return nil
 }
 
-// Parse popolate passed struct (via pointer) with configuration from varoius source.
+// Parse popolate passed struct (via pointer) with configuration from various source.
 // It guesses configuration type by file extention and call specific parser.
 // (.ini|.txt|.cfg) are evaluated as INI files which is to only format supported for now.
 // path can be an empty string to disable file parsing.
