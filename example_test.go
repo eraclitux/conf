@@ -21,7 +21,7 @@ func Example() {
 	c := myConf{}
 	err := cfgp.Parse("test_data/one.ini", &c)
 	if err != nil {
-		log.Fatal("Unable to parse configuration file", err)
+		log.Fatal("Unable to parse configuration", err)
 	}
 	fmt.Println("address:", c.Address)
 	fmt.Println("port:", c.Port)

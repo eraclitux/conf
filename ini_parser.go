@@ -7,7 +7,6 @@ import (
 	"os"
 	"reflect"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/eraclitux/stracer"
@@ -45,9 +44,10 @@ func getFieldByTagName(structValue reflect.Value, name string) reflect.Value {
 	return field
 }
 
-// putInStruct does not return error for field not found.
+// putInStruct converts values in conf files to Go types.
+// It does not return error for field not found.
 func putInStruct(structValue reflect.Value, kv []string) error {
-	// FIXME handle different types.
+	// FIXME add more types.
 	stracer.Traceln("storing pair:", kv)
 	f := strings.Title(kv[0])
 	fieldValue := structValue.FieldByName(f)
@@ -55,25 +55,9 @@ func putInStruct(structValue reflect.Value, kv []string) error {
 	if !fieldValue.IsValid() {
 		fieldValue = getFieldByTagName(structValue, kv[0])
 	}
-	if fieldValue.CanSet() {
-		switch fieldValue.Kind() {
-		case reflect.Int:
-			i, err := strconv.Atoi(kv[1])
-			if err != nil {
-				return err
-			}
-			fieldValue.SetInt(int64(i))
-		case reflect.String:
-			fieldValue.SetString(kv[1])
-		case reflect.Bool:
-			b, err := strconv.ParseBool(kv[1])
-			if err != nil {
-				return err
-			}
-			fieldValue.SetBool(b)
-		default:
-			return ErrUnknownFlagType
-		}
+	err := assignType(fieldValue, kv[1])
+	if err != nil {
+		return err
 	}
 	return nil
 }

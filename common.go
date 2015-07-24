@@ -7,8 +7,8 @@
 // in this order of precendece:
 //
 // 	- env variables
-// 	- command line arguments (which are automagically created and parsed)
 // 	- configuration file
+// 	- command line arguments (which are automagically created and parsed)
 //
 // Tags
 //
@@ -20,6 +20,9 @@
 //	<name>,<help message>,<section in file>
 //
 // Simplest configuration file
+//
+// To configuration file to be parsed a "File" struct field must be defined
+// and initialized with path to file.
 //
 // Files ending with:
 // 	ini|txt|cfg
@@ -83,25 +86,44 @@ func (s *myFlag) IsBoolFlag() bool {
 	return s.isBool
 }
 
-func (s *myFlag) Set(arg string) error {
-	stracer.Traceln("setting flag", s.field.Name)
-	switch s.fieldValue.Kind() {
+// assignType assing passed arg string to underlying Go type.
+func assignType(fieldValue reflect.Value, arg string) error {
+	if !fieldValue.CanSet() {
+		return ErrUnknownFlagType
+	}
+	switch fieldValue.Kind() {
 	case reflect.Int:
 		n, err := strconv.Atoi(arg)
 		if err != nil {
 			return err
 		}
-		s.fieldValue.SetInt(int64(n))
+		fieldValue.SetInt(int64(n))
+	case reflect.Float64:
+		f, err := strconv.ParseFloat(arg, 64)
+		if err != nil {
+			return err
+		}
+		fieldValue.SetFloat(f)
 	case reflect.String:
-		s.fieldValue.SetString(arg)
+		fieldValue.SetString(arg)
 	case reflect.Bool:
 		b, err := strconv.ParseBool(arg)
 		if err != nil {
 			return err
 		}
-		s.fieldValue.SetBool(b)
+		fieldValue.SetBool(b)
 	default:
 		return ErrUnknownFlagType
+	}
+	return nil
+}
+
+// Set converts passed arguments to actual Go types.
+func (s *myFlag) Set(arg string) error {
+	stracer.Traceln("setting flag", s.field.Name)
+	err := assignType(s.fieldValue, arg)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -136,6 +158,12 @@ func makeHelpMessage(f reflect.StructField) string {
 		} else {
 			helpM = "set a bool value"
 		}
+	case reflect.Float64:
+		if m, ok := helpMessageFromTags(f); ok {
+			helpM = m + ", a float64 value"
+		} else {
+			helpM = "set a float64 value"
+		}
 	default:
 		helpM = "unknown flag kind"
 	}
@@ -168,6 +196,8 @@ func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSe
 	fs.Var(&myFlag{f, fieldValue, isBool(fieldValue)}, name, makeHelpMessage(f))
 }
 
+// parseFlags parses struct fields, creates command line arguments
+// and check if they are specified.
 func parseFlags(s reflect.Value) error {
 	flagSet := flag.NewFlagSet("cfgp", flag.ExitOnError)
 	flagSet.Usage = func() {
@@ -198,6 +228,11 @@ func Parse(path string, confPtr interface{}) error {
 	if err != nil {
 		return err
 	}
+	// FIXME we want flags to be higher priority than file.(Really?)
+	err = parseFlags(structValue)
+	if err != nil {
+		return err
+	}
 	if path != "" {
 		if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {
 			err := parseINI(path, structValue)
@@ -209,10 +244,6 @@ func Parse(path string, confPtr interface{}) error {
 		} else {
 			return ErrFileFormat
 		}
-	}
-	err = parseFlags(structValue)
-	if err != nil {
-		return err
 	}
 	return nil
 }
