@@ -228,11 +228,6 @@ func Parse(path string, confPtr interface{}) error {
 	if err != nil {
 		return err
 	}
-	// FIXME we want flags to be higher priority than file.(Really?)
-	err = parseFlags(structValue)
-	if err != nil {
-		return err
-	}
 	if path != "" {
 		if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {
 			err := parseINI(path, structValue)
@@ -244,6 +239,11 @@ func Parse(path string, confPtr interface{}) error {
 		} else {
 			return ErrFileFormat
 		}
+	}
+	// Command line arguments override configuration file.
+	err = parseFlags(structValue)
+	if err != nil {
+		return err
 	}
 	return nil
 }
