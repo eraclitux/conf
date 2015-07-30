@@ -49,7 +49,8 @@ func TestMakeHelpMessage(t *testing.T) {
 }
 
 func TestParse_invalid_format(t *testing.T) {
-	err := Parse("local.yml", nil)
+	Path = "local.yml"
+	err := Parse(nil)
 	if err == nil {
 		t.Fail()
 	}

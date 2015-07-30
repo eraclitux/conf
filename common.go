@@ -6,9 +6,8 @@
 // Just define a struct with needed configuration. Values are then taken from multiple source
 // in this order of precendece:
 //
-// 	- env variables
-// 	- configuration file
 // 	- command line arguments (which are automagically created and parsed)
+// 	- configuration file
 //
 // Tags
 //
@@ -20,6 +19,13 @@
 //	<name>,<help message>,<section in file>
 //
 // Simplest configuration file
+//
+// cfgp.Path variable can set to path where file is located.
+// For default it is initialized to the value of evirontment variable
+//
+//	CFGP_FILE_PATH
+//
+// but could be changed to any other value.
 //
 // To configuration file to be parsed a "File" struct field must be defined
 // and initialized with path to file.
@@ -58,6 +64,12 @@ import (
 var ErrNeedPointer = errors.New("cfgp: pointer to struct expected")
 var ErrFileFormat = errors.New("cfgp: unrecognized file format, only (ini|txt|cfg) supported")
 var ErrUnknownFlagType = errors.New("cfgp: unknown flag type")
+
+// Path is the path to configuration file that
+// Parse will try to ,
+// This could be left to its default value if no configuration
+// file is needed.
+var Path string
 
 func getStructValue(confPtr interface{}) (reflect.Value, error) {
 	v := reflect.ValueOf(confPtr)
@@ -223,18 +235,18 @@ func parseFlags(s reflect.Value) error {
 // It guesses configuration type by file extention and call specific parser.
 // (.ini|.txt|.cfg) are evaluated as INI files which is to only format supported for now.
 // path can be an empty string to disable file parsing.
-func Parse(path string, confPtr interface{}) error {
+func Parse(confPtr interface{}) error {
 	structValue, err := getStructValue(confPtr)
 	if err != nil {
 		return err
 	}
-	if path != "" {
-		if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, path); match {
-			err := parseINI(path, structValue)
+	if Path != "" {
+		if match, _ := regexp.MatchString(`\.(ini|txt|cfg)$`, Path); match {
+			err := parseINI(Path, structValue)
 			if err != nil {
 				return err
 			}
-		} else if match, _ := regexp.MatchString(`\.(yaml)$`, path); match {
+		} else if match, _ := regexp.MatchString(`\.(yaml)$`, Path); match {
 			return errors.New("YAML not yet implemented. Want you help?")
 		} else {
 			return ErrFileFormat
@@ -246,4 +258,9 @@ func Parse(path string, confPtr interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func init() {
+	Path = os.Getenv("CFGP_FILE_PATH")
+	stracer.Traceln("file path from:", Path)
 }

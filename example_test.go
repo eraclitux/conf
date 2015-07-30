@@ -19,7 +19,9 @@ type myConf struct {
 
 func Example() {
 	c := myConf{}
-	err := cfgp.Parse("test_data/one.ini", &c)
+	//
+	cfgp.Path = "test_data/one.ini"
+	err := cfgp.Parse(&c)
 	if err != nil {
 		log.Fatal("Unable to parse configuration", err)
 	}
