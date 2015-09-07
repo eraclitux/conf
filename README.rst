@@ -11,7 +11,7 @@ cfgp
 
 Intro
 =====
-A go package for configuration parsing. Automagically populate a configuration ``struct`` using configuration files, command line arguments and environment variables.
+A go package for configuration parsing. Automagically populate a configuration ``struct`` using configuration files & command line arguments.
 
 It aims to be modular and easily extendible to support other formats. Only INI format supported for now.
 

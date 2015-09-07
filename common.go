@@ -20,15 +20,10 @@
 //
 // Simplest configuration file
 //
-// cfgp.Path variable can set to path where file is located.
-// For default it is initialized to the value of evirontment variable
+// cfgp.Path variable can be set to the path of a configuration file.
+// For default it is initialized to the value of evirontment variable:
 //
 //	CFGP_FILE_PATH
-//
-// but could be changed to any other value.
-//
-// To configuration file to be parsed a "File" struct field must be defined
-// and initialized with path to file.
 //
 // Files ending with:
 // 	ini|txt|cfg
@@ -36,10 +31,12 @@
 //
 //	https://en.wikipedia.org/wiki/INI_file
 //
-// First letter of every key found upper cased and than is searched
-// for a struct field with same name:
+// First letter of every key found is upper cased and than,
+// a struct field with same name is searched:
+//
 // 	user -> User
 //	portNumber -> PortNumber
+//
 // If such field name is not found than comparisson is made against
 // key specified as first element in tag.
 //
@@ -65,9 +62,9 @@ var ErrNeedPointer = errors.New("cfgp: pointer to struct expected")
 var ErrFileFormat = errors.New("cfgp: unrecognized file format, only (ini|txt|cfg) supported")
 var ErrUnknownFlagType = errors.New("cfgp: unknown flag type")
 
-// Path is the path to configuration file that
-// Parse will try to ,
-// This could be left to its default value if no configuration
+// Path is the path to configuration file.
+// For default is populated with env var CFGP_FILE_PATH.
+// This could be left empty if no configuration
 // file is needed.
 var Path string
 
@@ -262,5 +259,5 @@ func Parse(confPtr interface{}) error {
 
 func init() {
 	Path = os.Getenv("CFGP_FILE_PATH")
-	stracer.Traceln("file path from:", Path)
+	stracer.Traceln("init file path:", Path)
 }
