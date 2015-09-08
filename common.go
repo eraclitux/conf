@@ -189,7 +189,9 @@ func isBool(v reflect.Value) bool {
 func nameFromTags(f reflect.StructField) (string, bool) {
 	t := f.Tag.Get("cfgp")
 	tags := strings.Split(t, ",")
-	if len(tags) == 3 {
+	// if name position is empty return false es:
+	// `cfgp:",help message,"`
+	if len(tags) == 3 && tags[0] != "" {
 		return tags[0], true
 	}
 	return "", false
@@ -206,7 +208,7 @@ func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSe
 }
 
 // parseFlags parses struct fields, creates command line arguments
-// and check if they are specified.
+// and check if they are passed as arguments.
 func parseFlags(s reflect.Value) error {
 	flagSet := flag.NewFlagSet("cfgp", flag.ExitOnError)
 	flagSet.Usage = func() {
