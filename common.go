@@ -207,10 +207,23 @@ func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSe
 	fs.Var(&myFlag{f, fieldValue, isBool(fieldValue)}, name, makeHelpMessage(f))
 }
 
+// hasTestFlag helps to identify if a test
+// is running with flags that can make
+// flagSet.Parse() fail.
+func hasTestFlag([]string) bool {
+	for _, f := range os.Args[1:] {
+		if f == `-test.v=true` {
+			stracer.Traceln("test flag found")
+			return true
+		}
+	}
+	return false
+}
+
 // parseFlags parses struct fields, creates command line arguments
 // and check if they are passed as arguments.
 func parseFlags(s reflect.Value) error {
-	flagSet := flag.NewFlagSet("cfgp", flag.ExitOnError)
+	flagSet := flag.NewFlagSet("cfgp", flag.ContinueOnError)
 	flagSet.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		flagSet.PrintDefaults()
@@ -222,9 +235,12 @@ func parseFlags(s reflect.Value) error {
 			createFlag(typeOfT.Field(i), fieldValue, flagSet)
 		}
 	}
-	err := flagSet.Parse(os.Args[1:])
+	args := os.Args[1:]
+	if hasTestFlag(os.Args[1:]) {
+		args = []string{}
+	}
+	err := flagSet.Parse(args)
 	if err != nil {
-		stracer.Traceln("this is not executed")
 		return err
 	}
 	return nil
