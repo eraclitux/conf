@@ -84,8 +84,9 @@ type myFlag struct {
 	isBool     bool
 }
 
+// String () is used to print default value by PrintDefaults().
 func (s *myFlag) String() string {
-	return s.field.Name
+	return s.fieldValue.String()
 }
 
 // IsBoolFlag istructs the command-line parser
