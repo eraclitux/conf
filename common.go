@@ -42,7 +42,7 @@
 //
 // cfgp tries to be modular and easily extendible to support different formats.
 //
-// This is a work in progress, better packages are out there.
+// This is a work in progress, APIs can change.
 package cfgp
 
 import (
@@ -153,27 +153,27 @@ func makeHelpMessage(f reflect.StructField) string {
 	switch f.Type.Kind() {
 	case reflect.Int:
 		if m, ok := helpMessageFromTags(f); ok {
-			helpM = m + ", an int value"
+			helpM = m + ", an int"
 		} else {
-			helpM = "set an int value"
+			helpM = "set an int"
 		}
 	case reflect.String:
 		if m, ok := helpMessageFromTags(f); ok {
-			helpM = m + ", a string value"
+			helpM = m + ", a string"
 		} else {
-			helpM = "set a string value"
+			helpM = "set a string"
 		}
 	case reflect.Bool:
 		if m, ok := helpMessageFromTags(f); ok {
-			helpM = m + ", a bool value"
+			helpM = m + ", a bool"
 		} else {
-			helpM = "set a bool value"
+			helpM = "set a bool"
 		}
 	case reflect.Float64:
 		if m, ok := helpMessageFromTags(f); ok {
-			helpM = m + ", a float64 value"
+			helpM = m + ", a float64"
 		} else {
-			helpM = "set a float64 value"
+			helpM = "set a float64"
 		}
 	default:
 		helpM = "unknown flag kind"
