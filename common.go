@@ -86,6 +86,7 @@ type myFlag struct {
 
 // String () is used to print default value by PrintDefaults().
 func (s *myFlag) String() string {
+	// FIXME deal with non string types.
 	return s.fieldValue.String()
 }
 
@@ -224,7 +225,7 @@ func hasTestFlag([]string) bool {
 // parseFlags parses struct fields, creates command line arguments
 // and check if they are passed as arguments.
 func parseFlags(s reflect.Value) error {
-	flagSet := flag.NewFlagSet("cfgp", flag.ContinueOnError)
+	flagSet := flag.NewFlagSet("cfgp", flag.ExitOnError)
 	flagSet.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		flagSet.PrintDefaults()
