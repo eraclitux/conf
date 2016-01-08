@@ -1,7 +1,10 @@
 // cfgp - go configuration file parser package
-// Copyright (c) 2015 Andrea Masi
+// Copyright (c) 2015 Andrea Masi. All rights reserved.
+// Use of this source code is governed by MIT license
+// which that can be found in the LICENSE.txt file.
 
-// Package cfgp is a configuration parser fo Go.
+// Package cfgp is a configuration parser that loads configuration in a struct from files
+// and automatically creates cli flags.
 //
 // Just define a struct with needed configuration. Values are then taken from multiple source
 // in this order of precendece:
@@ -85,8 +88,10 @@ type myFlag struct {
 }
 
 // String () is used to print default value by PrintDefaults().
+//
+// BUG(eraclitux): non string types are wrongly representated.
 func (s *myFlag) String() string {
-	// FIXME deal with non string types.
+	// FIXME use "" with strings.
 	return s.fieldValue.String()
 }
 

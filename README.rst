@@ -44,6 +44,10 @@ An example of utilization::
                 fmt.Println("number of users:", c.NumberOfUsers)
         }
 
+See the flag arguments that are automagically created::
+
+        go run main.go -h
+
 See `godocs <http://godoc.org/github.com/eraclitux/cfgp>`_ for examples and documentation.
 
 Pull requests that add new tests, features or fixes are welcome, encouraged, and credited.

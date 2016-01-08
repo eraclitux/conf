@@ -1,6 +1,10 @@
-//INI files specific functions
+// Copyright (c) 2015 Andrea Masi. All rights reserved.
+// Use of this source code is governed by MIT license
+// which that can be found in the LICENSE.txt file.
 
 package cfgp
+
+//INI files specific functions
 
 import (
 	"bufio"
