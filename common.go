@@ -80,19 +80,30 @@ func getStructValue(confPtr interface{}) (reflect.Value, error) {
 }
 
 // myFlag implements Flag.Value.
-// TODO is filed needed?
 type myFlag struct {
+	// FIXME field is used only for debugging
+	// purposes. Remove it?
 	field      reflect.StructField
 	fieldValue reflect.Value
 	isBool     bool
 }
 
 // String () is used to print default value by PrintDefaults().
-//
-// BUG(eraclitux): non string types are wrongly representated.
 func (s *myFlag) String() string {
-	// FIXME use "" with strings.
-	return s.fieldValue.String()
+	var ret string
+	switch s.fieldValue.Kind() {
+	case reflect.String:
+		ret = s.fieldValue.String()
+	case reflect.Int:
+		ret = strconv.Itoa(int(s.fieldValue.Int()))
+	case reflect.Bool:
+		ret = strconv.FormatBool(s.fieldValue.Bool())
+	case reflect.Float64:
+		ret = strconv.FormatFloat(s.fieldValue.Float(), 'e', -1, 64)
+	default:
+		ret = "???"
+	}
+	return ret
 }
 
 // IsBoolFlag istructs the command-line parser
@@ -102,7 +113,7 @@ func (s *myFlag) IsBoolFlag() bool {
 	return s.isBool
 }
 
-// assignType assing passed arg string to underlying Go type.
+// assignType assigns passed arg string to underlying Go type.
 func assignType(fieldValue reflect.Value, arg string) error {
 	if !fieldValue.CanSet() {
 		return ErrUnknownFlagType
