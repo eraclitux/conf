@@ -7,6 +7,9 @@ cfgp
 .. |image0| image:: https://godoc.org/github.com/eraclitux/cfgp?status.png
 .. _image0: https://godoc.org/github.com/eraclitux/cfgp
 
+.. |image1| image:: https://drone.io/github.com/eraclitux/cfgp/status.png
+.. _image1: https://drone.io/github.com/eraclitux/cfgp/latest
+
 .. contents::
 
 Intro
