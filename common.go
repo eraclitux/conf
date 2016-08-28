@@ -61,6 +61,8 @@ import (
 	"github.com/eraclitux/stracer"
 )
 
+// TODO use struct tag to set a fiels as required
+
 var ErrNeedPointer = errors.New("cfgp: pointer to struct expected")
 var ErrFileFormat = errors.New("cfgp: unrecognized file format, only (ini|txt|cfg) supported")
 var ErrUnknownFlagType = errors.New("cfgp: unknown flag type")
