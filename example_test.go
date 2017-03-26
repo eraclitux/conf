@@ -2,13 +2,13 @@
 // Use of this source code is governed by MIT license
 // which that can be found in the LICENSE.txt file.
 
-package cfgp_test
+package conf_test
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/eraclitux/cfgp"
+	"github.com/eraclitux/conf"
 )
 
 type myConf struct {
@@ -17,7 +17,7 @@ type myConf struct {
 	// A command line flag "-users", which expects an int value,
 	// will be created.
 	// Same key name will be searched in configuration file.
-	NumberOfUsers int `cfgp:"users,number of users,"`
+	NumberOfUsers int `conf:"users,number of users,"`
 	Daemon        bool
 	Message       string
 }
@@ -26,8 +26,8 @@ func Example() {
 	// To create a dafault value for a flag
 	// assign it when instantiate the conf struct.
 	c := myConf{Message: "A default value"}
-	cfgp.Path = "test_data/one.ini"
-	err := cfgp.Parse(&c)
+	conf.Path = "test_data/one.ini"
+	err := conf.Parse(&c)
 	if err != nil {
 		log.Fatal("Unable to parse configuration", err)
 	}

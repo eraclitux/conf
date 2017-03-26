@@ -2,7 +2,7 @@
 // Use of this source code is governed by MIT license
 // which that can be found in the LICENSE.txt file.
 
-package cfgp
+package conf
 
 import (
 	"os"
@@ -11,7 +11,7 @@ import (
 
 type myConf struct {
 	Name    string
-	Surname string `cfgp:"sur-key,specify the surname,"`
+	Surname string `conf:"sur-key,specify the surname,"`
 }
 
 func TestParseFlags(t *testing.T) {

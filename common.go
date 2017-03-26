@@ -1,9 +1,9 @@
-// cfgp - go configuration file parser package
+// conf - go configuration file parser package
 // Copyright (c) 2015 Andrea Masi. All rights reserved.
 // Use of this source code is governed by MIT license
 // which that can be found in the LICENSE.txt file.
 
-// Package cfgp is a configuration parser that loads configuration in a struct from files
+// Package conf is a configuration parser that loads configuration in a struct from files
 // and automatically creates cli flags.
 //
 // Just define a struct with needed configuration. Values are then taken from multiple source
@@ -23,7 +23,7 @@
 //
 // Simplest configuration file
 //
-// cfgp.Path variable can be set to the path of a configuration file.
+// conf.Path variable can be set to the path of a configuration file.
 // For default it is initialized to the value of evirontment variable:
 //
 //	CFGP_FILE_PATH
@@ -43,10 +43,10 @@
 // If such field name is not found than comparisson is made against
 // key specified as first element in tag.
 //
-// cfgp tries to be modular and easily extendible to support different formats.
+// conf tries to be modular and easily extendible to support different formats.
 //
 // This is a work in progress, APIs can change.
-package cfgp
+package conf
 
 import (
 	"errors"
@@ -63,9 +63,9 @@ import (
 
 // TODO use struct tag to set a fiels as required
 
-var ErrNeedPointer = errors.New("cfgp: pointer to struct expected")
-var ErrFileFormat = errors.New("cfgp: unrecognized file format, only (ini|txt|cfg) supported")
-var ErrUnknownFlagType = errors.New("cfgp: unknown flag type")
+var ErrNeedPointer = errors.New("conf: pointer to struct expected")
+var ErrFileFormat = errors.New("conf: unrecognized file format, only (ini|txt|cfg) supported")
+var ErrUnknownFlagType = errors.New("conf: unknown flag type")
 
 // Path is the path to configuration file.
 // For default is populated with env var CFGP_FILE_PATH.
@@ -158,7 +158,7 @@ func (s *myFlag) Set(arg string) error {
 }
 
 func helpMessageFromTags(f reflect.StructField) (string, bool) {
-	t := f.Tag.Get("cfgp")
+	t := f.Tag.Get("conf")
 	tags := strings.Split(t, ",")
 	if len(tags) == 3 {
 		return tags[1], true
@@ -207,10 +207,10 @@ func isBool(v reflect.Value) bool {
 }
 
 func nameFromTags(f reflect.StructField) (string, bool) {
-	t := f.Tag.Get("cfgp")
+	t := f.Tag.Get("conf")
 	tags := strings.Split(t, ",")
 	// if name position is empty return false es:
-	// `cfgp:",help message,"`
+	// `conf:",help message,"`
 	if len(tags) == 3 && tags[0] != "" {
 		return tags[0], true
 	}
@@ -243,7 +243,7 @@ func hasTestFlag([]string) bool {
 // parseFlags parses struct fields, creates command line arguments
 // and check if they are passed as arguments.
 func parseFlags(s reflect.Value) error {
-	flagSet := flag.NewFlagSet("cfgp", flag.ExitOnError)
+	flagSet := flag.NewFlagSet("conf", flag.ExitOnError)
 	flagSet.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		flagSet.PrintDefaults()
@@ -266,7 +266,7 @@ func parseFlags(s reflect.Value) error {
 	return nil
 }
 
-// Parse popolate passed struct (via pointer) with configuration from various source.
+// Parse populates passed struct (via pointer) with configuration from various source.
 // It guesses configuration type by file extention and call specific parser.
 // (.ini|.txt|.cfg) are evaluated as INI files which is to only format supported for now.
 // path can be an empty string to disable file parsing.

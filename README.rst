@@ -1,15 +1,15 @@
 ====
-cfgp
+conf
 ====
 
-|image0|_ 
+|image0|_
 |image1|_
 
-.. |image0| image:: https://godoc.org/github.com/eraclitux/cfgp?status.png
-.. _image0: https://godoc.org/github.com/eraclitux/cfgp
+.. |image0| image:: https://godoc.org/github.com/eraclitux/conf?status.png
+.. _image0: https://godoc.org/github.com/eraclitux/conf
 
-.. |image1| image:: https://drone.io/github.com/eraclitux/cfgp/status.png
-.. _image1: https://drone.io/github.com/eraclitux/cfgp/latest
+.. |image1| image:: https://drone.io/github.com/eraclitux/conf/status.png
+.. _image1: https://drone.io/github.com/eraclitux/conf/latest
 
 .. contents::
 
@@ -29,7 +29,7 @@ An example of utilization::
                 // A command line flag "-users", which expects an int value,
                 // will be created.
                 // Same key name will be searched in configuration file.
-                NumberOfUsers int `cfgp:"users,number of users,"`
+                NumberOfUsers int `conf:"users,number of users,"`
                 Daemon        bool
                 Message       string
         }
@@ -38,8 +38,8 @@ An example of utilization::
                 // To create a dafault value for a flag
                 // assign it when instantiate the conf struct.
                 c := myConf{Message: "A default value"}
-                cfgp.Path = "test_data/one.ini"
-                err := cfgp.Parse(&c)
+                conf.Path = "test_data/one.ini"
+                err := conf.Parse(&c)
                 if err != nil {
                         log.Fatal("Unable to parse configuration", err)
                 }
@@ -52,6 +52,6 @@ See the flag arguments that are automagically created::
 
         go run main.go -h
 
-See `godocs <http://godoc.org/github.com/eraclitux/cfgp>`_ for examples and documentation.
+See `godocs <http://godoc.org/github.com/eraclitux/conf>`_ for examples and documentation.
 
 Pull requests that add new tests, features or fixes are welcome, encouraged, and credited.
