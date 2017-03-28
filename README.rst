@@ -8,8 +8,8 @@ conf
 .. |image0| image:: https://godoc.org/github.com/eraclitux/conf?status.png
 .. _image0: https://godoc.org/github.com/eraclitux/conf
 
-.. |image1| image:: https://drone.io/github.com/eraclitux/conf/status.png
-.. _image1: https://drone.io/github.com/eraclitux/conf/latest
+.. |image1| image:: https://travis-ci.org/eraclitux/conf.svg?branch=master
+.. _image1: https://travis-ci.org/eraclitux/conf
 
 .. contents::
 
