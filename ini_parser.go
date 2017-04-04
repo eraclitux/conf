@@ -13,7 +13,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/eraclitux/stracer"
+	"github.com/eraclitux/trace"
 )
 
 // parseKeyValue given one line encoded like "key = value" returns corresponding
@@ -40,7 +40,7 @@ func getFieldByTagName(structValue reflect.Value, name string) reflect.Value {
 	for i := 0; i < structValue.NumField(); i++ {
 		if n, ok := nameFromTags(structType.Field(i)); ok {
 			if n == name {
-				stracer.Traceln("found a key by tag", n, name)
+				trace.Traceln("found a key by tag", n, name)
 				field = structValue.Field(i)
 			}
 		}
@@ -52,7 +52,7 @@ func getFieldByTagName(structValue reflect.Value, name string) reflect.Value {
 // It does not return error for field not found.
 func putInStruct(structValue reflect.Value, kv []string) error {
 	// FIXME add more types.
-	stracer.Traceln("storing pair:", kv)
+	trace.Traceln("storing pair:", kv)
 	f := strings.Title(kv[0])
 	fieldValue := structValue.FieldByName(f)
 	// Field not found, try to get it by tags.
@@ -88,7 +88,7 @@ func parseINI(path string, structValue reflect.Value) error {
 	section := "default"
 	for scanner.Scan() {
 		line := scanner.Text()
-		stracer.Traceln("raw line to parse:", line)
+		trace.Traceln("raw line to parse:", line)
 		if commentExp.MatchString(line) {
 			continue
 		} else if sectionExp.MatchString(line) {
@@ -106,6 +106,6 @@ func parseINI(path string, structValue reflect.Value) error {
 	if err := scanner.Err(); err != nil {
 		return err
 	}
-	stracer.Traceln("coded map:", conf)
+	trace.Traceln("coded map:", conf)
 	return nil
 }
