@@ -2,14 +2,16 @@
 conf
 ====
 
-|image0|_
-|image1|_
+|image0|_ |image1|_ |image2|_
 
 .. |image0| image:: https://godoc.org/github.com/eraclitux/conf?status.png
 .. _image0: https://godoc.org/github.com/eraclitux/conf
 
 .. |image1| image:: https://travis-ci.org/eraclitux/conf.svg?branch=master
 .. _image1: https://travis-ci.org/eraclitux/conf
+
+.. |image2| image:: https://goreportcard.com/badge/github.com/eraclitux/conf
+.. _image2: https://goreportcard.com/report/github.com/eraclitux/conf
 
 .. contents::
 
