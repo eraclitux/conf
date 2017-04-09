@@ -149,7 +149,7 @@ func assignType(fieldValue reflect.Value, arg string) error {
 
 // Set converts passed arguments to actual Go types.
 func (s *myFlag) Set(arg string) error {
-	trace.Traceln("setting flag", s.field.Name)
+	trace.Println("setting flag", s.field.Name)
 	err := assignType(s.fieldValue, arg)
 	if err != nil {
 		return err
@@ -223,7 +223,7 @@ func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSe
 	if n, ok := nameFromTags(f); ok {
 		name = n
 	}
-	trace.Traceln("creating flag:", name)
+	trace.Println("creating flag:", name)
 	fs.Var(&myFlag{f, fieldValue, isBool(fieldValue)}, name, makeHelpMessage(f))
 }
 
@@ -233,7 +233,7 @@ func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSe
 func hasTestFlag([]string) bool {
 	for _, f := range os.Args[1:] {
 		if f == `-test.v=true` {
-			trace.Traceln("test flag found")
+			trace.Println("test flag found")
 			return true
 		}
 	}
@@ -297,5 +297,5 @@ func Parse(confPtr interface{}) error {
 
 func init() {
 	Path = os.Getenv("CFGP_FILE_PATH")
-	trace.Traceln("init file path:", Path)
+	trace.Println("init file path:", Path)
 }
