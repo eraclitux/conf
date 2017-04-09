@@ -7,7 +7,7 @@
 // and automatically creates cli flags.
 //
 // Just define a struct with needed configuration. Values are then taken from multiple source
-// in this order of precendece:
+// in this order of precedence:
 //
 // 	- command line arguments (which are automagically created and parsed)
 // 	- configuration file
@@ -24,7 +24,7 @@
 // Simplest configuration file
 //
 // conf.Path variable can be set to the path of a configuration file.
-// For default it is initialized to the value of evirontment variable:
+// For default it is initialized to the value of environment variable:
 //
 //	CFGP_FILE_PATH
 //
@@ -40,10 +40,10 @@
 // 	user -> User
 //	portNumber -> PortNumber
 //
-// If such field name is not found than comparisson is made against
+// If such field name is not found than comparison is made against
 // key specified as first element in tag.
 //
-// conf tries to be modular and easily extendible to support different formats.
+// conf tries to be modular and easily extensible to support different formats.
 //
 // This is a work in progress, APIs can change.
 package conf
@@ -217,7 +217,7 @@ func nameFromTags(f reflect.StructField) (string, bool) {
 	return "", false
 }
 
-// FIXME can we semplify using structType := structValue.Type()?
+// FIXME can we simplify using structType := structValue.Type()?
 func createFlag(f reflect.StructField, fieldValue reflect.Value, fs *flag.FlagSet) {
 	name := strings.ToLower(f.Name)
 	if n, ok := nameFromTags(f); ok {
@@ -267,7 +267,7 @@ func parseFlags(s reflect.Value) error {
 }
 
 // Parse populates passed struct (via pointer) with configuration from various source.
-// It guesses configuration type by file extention and call specific parser.
+// It guesses configuration type by file extension and call specific parser.
 // (.ini|.txt|.cfg) are evaluated as INI files which is to only format supported for now.
 // path can be an empty string to disable file parsing.
 func Parse(confPtr interface{}) error {
