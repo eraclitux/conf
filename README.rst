@@ -4,7 +4,7 @@ conf
 
 |image0|_ |image1|_ |image2|_
 
-.. |image0| image:: https://godoc.org/github.com/eraclitux/conf?status.png
+.. |image0| image:: https://godoc.org/github.com/eraclitux/conf?status.svg
 .. _image0: https://godoc.org/github.com/eraclitux/conf
 
 .. |image1| image:: https://travis-ci.org/eraclitux/conf.svg?branch=master
